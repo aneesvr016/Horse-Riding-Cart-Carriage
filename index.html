@@ -1,1 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horse Riding & Cart Carriage - Ride. Drive. Jump. Conquer.</title>
+<meta name="description" content="Horse Riding & Cart Carriage — ride horses, drive carriages, master jumps, and enjoy thrilling archery adventures. Explore beautiful 3D forests today.">
+<meta name="keywords" content="horse riding game, cart carriage game, horse jumping, horseback archery, 3d horse simulator, offline horse game, carriage driving game, horse adventure">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap');
+
+  :root {
+    --accent: #d4a24c;
+    --accent2: #4a6b3f;
+    --dark: #10140f;
+    --dark2: #161b13;
+    --dark3: #1d241a;
+    --card: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --text: #ece6d8;
+    --muted: #87917f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(ellipse, rgba(212,162,76,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .hero-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(212,162,76,0.35);
+    padding: 5px 16px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(44px, 8vw, 80px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 span {
+    display: block;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 20px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 400;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-cta {
+    margin-top: 40px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #10140f;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn:hover { background: #e6b462; transform: translateY(-2px); }
+
+  /* ─── SECTION ─── */
+  section {
+    padding: 70px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .section-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+
+  /* ─── MODE CARDS ─── */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .mode-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .mode-card:hover {
+    border-color: rgba(212,162,76,0.3);
+    transform: translateY(-3px);
+  }
+
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .mode-card:hover::before { transform: scaleX(1); }
+
+  .mode-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .mode-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .mode-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ─── REWARDS / CUSTOMIZE ─── */
+  .economy-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 32px 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+  }
+
+  .econ-item { text-align: center; }
+
+  .econ-icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .econ-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .econ-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ─── FEATURES ─── */
+  .features-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+  }
+
+  .feature-item {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .feature-item:nth-child(odd) { padding-right: 24px; }
+  .feature-item:nth-child(even) { padding-left: 24px; border-left: 1px solid var(--border); }
+
+  .feature-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .feature-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+  /* ─── QUOTE / TRAINING ─── */
+  .training-box {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    background: var(--card);
+    border-radius: 0 6px 6px 0;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .training-box strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 40px 0;
+    text-align: center;
+  }
+
+  .footer-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .footer-copy {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .footer-links { display: flex; gap: 20px; justify-content: center; }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: #fff; }
+
+  /* ─── ANIMATION ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 520px) {
+    .features-list { grid-template-columns: 1fr; }
+    .feature-item:nth-child(even) { padding-left: 0; border-left: none; }
+    .feature-item:nth-child(odd) { padding-right: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-tag">Available on iOS</span>
+  <h1>Horse Riding<span>& Cart Carriage</span></h1>
+  <p class="hero-sub">Ride &nbsp;·&nbsp; Drive &nbsp;·&nbsp; Jump &nbsp;·&nbsp; Conquer</p>
+  <div class="hero-cta">
+    <a href="#" class="btn">Download on the App Store</a>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section>
+  <div class="container">
+    <p class="section-label">About the Game</p>
+    <h2 class="section-title">One Game. Four Adventures.</h2>
+    <p class="section-desc">
+      Horse Riding & Cart Carriage is a 3D adventure game built for true horse lovers. Ride majestic horses, drive traditional carts and carriages, jump over thrilling obstacle courses, and master horseback archery — all in one immersive experience across beautiful forest environments.
+    </p>
+    <div class="training-box">
+      <strong>New to the game?</strong> Easy-to-learn controls let every player jump straight into the saddle — no riding experience needed. Master the reins, the jumps, and the bow at your own pace.
+    </div>
+  </div>
+</section>
+
+<!-- MODES -->
+<section>
+  <div class="container">
+    <p class="section-label">Game Modes</p>
+    <h2 class="section-title">Four Ways to Ride</h2>
+    <div class="mode-grid">
+
+      <div class="mode-card">
+        <span class="mode-icon">🐎</span>
+        <p class="mode-name">Horse Riding</p>
+        <p class="mode-desc">Ride majestic horses through scenic forests, countryside trails, and exciting adventure routes. Improve your riding skills while completing engaging missions.</p>
+      </div>
+
+      <div class="mode-card">
+        <span class="mode-icon">🛒</span>
+        <p class="mode-name">Cart Carriage Driving</p>
+        <p class="mode-desc">Drive traditional horse-drawn carts and carriages across beautiful landscapes. Navigate challenging paths, transport cargo, and master realistic carriage controls.</p>
+      </div>
+
+      <div class="mode-card">
+        <span class="mode-icon">🏇</span>
+        <p class="mode-name">Horse Jumping</p>
+        <p class="mode-desc">Challenge yourself with exciting obstacle courses. Jump over fences, wooden barriers, rocks, and other obstacles while maintaining speed and perfect timing.</p>
+      </div>
+
+      <div class="mode-card">
+        <span class="mode-icon">🏹</span>
+        <p class="mode-name">Horseback Archery</p>
+        <p class="mode-desc">Become a skilled horseback archer by riding through the wilderness and completing exciting archery missions. Test your aim and improve your accuracy.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CUSTOMIZE -->
+<section>
+  <div class="container">
+    <p class="section-label">Unlock & Customize</p>
+    <h2 class="section-title">Build Your Stable</h2>
+    <p class="section-desc">Progress through missions to unlock new horses, gear, and equipment for your adventure.</p>
+    <div class="economy-card">
+      <div class="econ-item">
+        <span class="econ-icon">🐴</span>
+        <p class="econ-title">Horse Breeds & Skins</p>
+        <p class="econ-desc">Unlock multiple beautiful horse breeds along with different skins and colors to make your stable your own.</p>
+      </div>
+      <div class="econ-item">
+        <span class="econ-icon">🛞</span>
+        <p class="econ-title">Carts & Carriages</p>
+        <p class="econ-desc">Collect traditional carts and carriages, each with their own look and handling for your driving adventures.</p>
+      </div>
+      <div class="econ-item">
+        <span class="econ-icon">🏹</span>
+        <p class="econ-title">Outfits & Bows</p>
+        <p class="econ-desc">Equip stylish rider outfits and powerful bows and arrows, then upgrade your gear as you progress.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="container">
+    <p class="section-label">Everything Included</p>
+    <h2 class="section-title">Key Features</h2>
+    <div class="features-list">
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">4 unique modes — Riding, Carriage, Jumping & Archery</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Realistic horse riding gameplay</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Smooth and responsive controls</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Beautiful 3D forest environments</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Challenging missions and rewarding progression</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Multiple horse breeds, skins, and colors</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Traditional carts and carriages to unlock</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">High-quality graphics and immersive sound effects</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Offline gameplay support</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span class="feature-text">Easy-to-learn controls, free to play</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p class="footer-title">Horse Riding & Cart Carriage</p>
+    <p class="footer-copy">© 2026 Horse Riding & Cart Carriage. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="marketing.html">Marketing</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
 
